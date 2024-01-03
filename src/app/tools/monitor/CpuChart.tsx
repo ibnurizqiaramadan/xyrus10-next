@@ -48,10 +48,10 @@ export const CpuChart = (props: {
         layout: {
           autoPadding: true,
         },
-        interaction: {
-          intersect: false,
-          mode: 'index',
-        },
+        // interaction: {
+        //   intersect: false,
+        //   mode: 'index',
+        // },
         plugins: {
           legend: {
             position: 'bottom',
