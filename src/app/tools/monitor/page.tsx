@@ -10,6 +10,7 @@ import { Input } from '@nextui-org/react';
 
 export default function ToolsPage() {
   const [ serverName, setServerName ] = useState('');
+  const [ serverNameInput, setServerNameInput ] = useState('');
   const [ socket, setSocket ] = useState<Socket|null>(null);
   const [ readData, setReadData ] = useState(false);
   const [ totalDataSave, setTotalDataSave ] = useState(0);
@@ -117,74 +118,26 @@ export default function ToolsPage() {
     }
   };
 
-  const serverNameFocus = (event: any) => {
-    event.target.value = serverName;
-    event.target.setSelectionRange(0, event.target.value.length);
-  };
-  const serverNameBlur = (event: any) => {
-    event.target.value = '';
-  };
-
   return (
     <>
       <title>Server Monitor</title>
       <main className="flex-grow">
         <div className=''>
           <h3 className='text-2xl'>System Monitoring</h3>
-          <Input type="text" className='bg-inherit w-2/12' variant='underlined' placeholder={serverName}
+          <Input type="text" className='bg-inherit lg:w-2/12 md:w-4/12 sm:w-6/12' variant='underlined' value={serverNameInput} placeholder={serverName}
             onKeyUp={serverKeyUpHandlers}
-            onFocus={serverNameFocus}
-            onBlur={serverNameBlur}
+            onFocus={(e) => setServerNameInput(serverName)}
+            onBlur={(e) => setServerNameInput('')}
+            onChange={(e) => setServerNameInput(e.target.value)}
             name='serverName'
           />
-          {/* <input className='placeholder:text-slate-300 bg-inherit border-none mt-1 w-auto cursor-pointer'
-            type="text"
-            placeholder={serverName}
-            onKeyUp={serverKeyUpHandlers}
-            onFocus={serverNameFocus}
-            onBlur={serverNameBlur}
-            readOnly={false} name='serverName' /> */}
         </div>
         <div className='flex space-x-4 mt-4'>
-          {/* <Container
-            title={cpuData.name}
-            content={(
-              <div className='flex justify-between h-[400px] w-[600px]'>
-                <div className='w-[150px] rounded-lg p-4'>
-                  <div>
-                    <div>Uptime</div>
-                    <div className='font-bold'>{cpuData.uptime.split('.')[0]}</div>
-                  </div>
-                  <div>
-                    <div>Usage</div>
-                    <div className='font-bold'>{cpuData.usage.toFixed(2)} %</div>
-                  </div>
-                  <div>
-                    <div>Speed</div>
-                    <div className='font-bold'>{cpuData.speed.toLocaleString(undefined, { maximumFractionDigits: 0 })} Mhz</div>
-                  </div>
-                  <div>
-                    <div>Threads</div>
-                    <div className='font-bold'>{cpuData.threads}</div>
-                  </div>
-                </div>
-                <div className='w-auto px-4'>
-                  <CpuChart
-                    id="perCpuChart"
-                    name={serverName}
-                    cores={cpuData.cores as number[]}
-                    threads={cpuData.threads}
-                    dataLenght={totalDataSave}
-                  />
-                </div>
-              </div>
-            )}
-          /> */}
           <Container
             title={cpuData.name}
             content={(
-              <div className='flex space-x-4 h-[400px]'>
-                <div className='w-1/6 rounded-lg p-4'>
+              <div className='flex flex-col-reverse space-x-4 h-[600px] md:h-[400px] lg:h-[400px] lg:flex-row md:flex-row'>
+                <div className='lg:w-1/6 md:w-1/6 sm:w-full rounded-lg p-4'>
                   <div>
                     <div>Uptime</div>
                     <div className='font-bold'>{cpuData.uptime.split('.')[0]}</div>
@@ -202,7 +155,7 @@ export default function ToolsPage() {
                     <div className='font-bold'>{cpuData.threads}</div>
                   </div>
                 </div>
-                <div className='w-5/6 px-4'>
+                <div className='lg:w-5/6 md:w-5/6 sm:w-full h-full py-4'>
                   <CpuChart
                     id="perCpuChart1"
                     name={serverName}
