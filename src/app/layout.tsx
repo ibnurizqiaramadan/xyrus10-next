@@ -6,9 +6,7 @@ import React from 'react';
 import NextTopLoader from 'nextjs-toploader';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import { config } from '@fortawesome/fontawesome-svg-core';
-// import NavbarSide from '@/components/navbarSide';
 import { Providers } from './providers';
-// eslint-disable-next-line no-unused-vars
 import ReduxProvider from '@/providers/redux/ReduxProvider';
 config.autoAddCss = false;
 
