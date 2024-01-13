@@ -46,9 +46,6 @@ export const CpuChart = (props: {
         color: '#fff',
         backgroundColor: '#fff',
         normalized: true,
-        layout: {
-          autoPadding: true,
-        },
         plugins: {
           legend: {
             position: 'bottom',
@@ -106,9 +103,9 @@ export const CpuChart = (props: {
         data: JSON.parse(localStorage.getItem(props.storageName !== undefined ? `${props.storageName}` : `${props.name}-cpu-${index}`) ?? '[]') as any[],
         backgroundColor: props.storageName !== undefined ? colorAll2 : color2,
         borderColor: props.storageName !== undefined ? colorAll1 : color1,
-        borderWidth: 2,
-        pointRadius: 1,
-        pointHoverRadius: 1,
+        borderWidth: 1,
+        pointRadius: 0,
+        pointHoverRadius: 0,
         tension: 0.4,
         fill: true,
       });
