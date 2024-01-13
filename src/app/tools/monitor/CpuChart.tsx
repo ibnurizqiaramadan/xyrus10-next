@@ -21,7 +21,8 @@ export const CpuChart = (props: {
   cores: number[],
   threads: number,
   name: string,
-  dataLenght?: number
+  dataLenght?: number,
+  storageName?: string
 }): JSX.Element => {
   const myChartRef = useRef<Chart | null>(null);
   const dataLenght = props.dataLenght ?? 60;
@@ -29,7 +30,6 @@ export const CpuChart = (props: {
   useEffect(() => {
     Chart.register(...registerables);
     const ctx = document.getElementById(props.id) as HTMLCanvasElement;
-    // const labels = Array.from({ length: dataLenght }, (_, index) => new Date(Date.now() - ((dataLenght - index) * 1000)).toLocaleTimeString());
     const labels = Array.from({ length: dataLenght }, (_, index) => index + 1);
 
     myChartRef.current = new Chart(ctx, {
@@ -45,16 +45,14 @@ export const CpuChart = (props: {
         maintainAspectRatio: false,
         color: '#fff',
         backgroundColor: '#fff',
+        normalized: true,
         layout: {
           autoPadding: true,
         },
-        // interaction: {
-        //   intersect: false,
-        //   mode: 'index',
-        // },
         plugins: {
           legend: {
             position: 'bottom',
+            display: props.storageName !== undefined ? false : true,
             labels: {
               font: {
                 size: 14,
@@ -62,13 +60,12 @@ export const CpuChart = (props: {
             },
           },
           title: {
-            display: true,
+            display: false,
             text: '',
           },
         },
         scales: {
           x: {
-            // max: 60,
             ticks: {
               color: 'white',
             },
@@ -90,19 +87,25 @@ export const CpuChart = (props: {
       },
     });
 
-    for (let index = 0; index < props.threads; index++) {
+    for (let index = 0; index < Number(props.storageName !== undefined ? 1 : props.threads); index++) {
       const randomColor = () => Math.floor(Math.random() * 255) + 1;
       const r = randomColor();
       const g = randomColor();
       const b = randomColor();
       const color1 = `rgba(${r}, ${g}, ${b}, 255)`;
       const color2 = `rgba(${r}, ${g}, ${b}, 0.1)`;
+      let colorAll1 = '';
+      let colorAll2 = '';
+      if (props.storageName !== undefined) {
+        colorAll1 = `rgba(0, 255, 0, 255)`;
+        colorAll2 = `rgba(0, 255, 0, 0.1)`;
+      }
 
       myChartRef.current?.data.datasets.push({
-        label: `CPU ${index}`,
-        data: JSON.parse(localStorage.getItem(`${props.name}-cpu-${index}`) ?? '[]') as any[],
-        backgroundColor: color2,
-        borderColor: color1,
+        label: `CPU ${props.storageName !== undefined ? 'All' : index}`,
+        data: JSON.parse(localStorage.getItem(props.storageName !== undefined ? `${props.storageName}` : `${props.name}-cpu-${index}`) ?? '[]') as any[],
+        backgroundColor: props.storageName !== undefined ? colorAll2 : color2,
+        borderColor: props.storageName !== undefined ? colorAll1 : color1,
         borderWidth: 2,
         pointRadius: 1,
         pointHoverRadius: 1,
@@ -116,7 +119,7 @@ export const CpuChart = (props: {
     return () => {
       myChartRef.current?.destroy();
     };
-  }, [ props.threads, props.id, props.name, dataLenght ]);
+  }, [ props.threads, props.id, props.name, dataLenght, props.storageName ]);
 
   useEffect(() => {
     const chartLabels = myChartRef.current?.data.labels as any[];
@@ -132,11 +135,10 @@ export const CpuChart = (props: {
       if (chartData.length > dataLenght) {
         chartData.shift();
       }
-      localStorage.setItem(`${props.name}-cpu-${index}`, JSON.stringify(chartData));
     });
 
     myChartRef.current?.update();
-  }, [ props.cores, props.name, dataLenght ]);
+  }, [ props.cores, props.name, dataLenght, props.storageName ]);
 
   return (
     <div className='h-full w-full'>
