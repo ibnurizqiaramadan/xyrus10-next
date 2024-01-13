@@ -1,11 +1,10 @@
 'use client';
-import React from 'react';
-// eslint-disable-next-line no-unused-vars
+import React, { useEffect } from 'react';
 import { Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle, NavbarMenu, NavbarMenuItem, DropdownTrigger, Dropdown, DropdownMenu, DropdownItem } from '@nextui-org/react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-// import { useRouter } from 'next/router';
-// import { AcmeLogo } from './AcmeLogo.jsx';
+import { useDispatch } from 'react-redux';
+import { set } from '@/features/monitor/tabSelectedSlice';
 
 export default function App() {
   const [ isMenuOpen, setIsMenuOpen ] = React.useState(false);
@@ -27,6 +26,11 @@ export default function App() {
 
   const path = usePathname();
   const router = useRouter();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(set(localStorage.getItem('selectedTabs') as string));
+  }, [ dispatch ]);
 
   return (
     <Navbar onMenuOpenChange={setIsMenuOpen} className='select-none' isBordered>

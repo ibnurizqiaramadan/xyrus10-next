@@ -7,7 +7,7 @@ import NextTopLoader from 'nextjs-toploader';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import { config } from '@fortawesome/fontawesome-svg-core';
 import { Providers } from './providers';
-import ReduxProvider from '@/providers/redux/ReduxProvider';
+import StoreProvider from '@/store/StoreProvider';
 config.autoAddCss = false;
 
 const inter = Inter({ subsets: [ 'latin' ] });
@@ -23,7 +23,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <ReduxProvider>
+    <StoreProvider>
       <html lang="en" className='dark'>
         <body className={inter.className + ''}>
           <NextTopLoader
@@ -39,6 +39,6 @@ export default function RootLayout({
           </Providers>
         </body>
       </html>
-    </ReduxProvider>
+    </StoreProvider>
   );
 }

@@ -8,6 +8,9 @@ import { CpuData } from './type';
 import { CpuChart } from './CpuChart';
 import { Card, CardBody, Input, Tab, Tabs } from '@nextui-org/react';
 import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/store/store';
+import { set } from '@/features/monitor/tabSelectedSlice';
 
 export default function ToolsPage() {
   const [ serverName, setServerName ] = useState('');
@@ -15,7 +18,9 @@ export default function ToolsPage() {
   const [ socket, setSocket ] = useState<Socket|null>(null);
   const [ readData, setReadData ] = useState(false);
   const [ totalDataSave, setTotalDataSave ] = useState(0);
-  const [ selectedTabs, setSelectedTabs ] = useState(localStorage.getItem('selectedTabs') ?? 'chart-percore');
+  const selectedTabs = useSelector((state: RootState) => state.selectedTabMonitor.value);
+
+  const dispatch = useDispatch();
   // eslint-disable-next-line no-unused-vars
   const [ cpuData, setCpuData ]: [ CpuData, any ] = useState({
     name: '-',
@@ -198,7 +203,7 @@ export default function ToolsPage() {
                 </div>
                 <div className='lg:w-5/6 md:w-5/6 sm:w-full h-full pt-2' style={{ marginLeft: '0px' }}>
                   <Tabs aria-label="Dynamic tabs" items={tabsData} variant='underlined' selectedKey={selectedTabs} onSelectionChange={(key: React.Key) => {
-                    setSelectedTabs(key as string);
+                    dispatch(set(key as string));
                     localStorage.setItem('selectedTabs', key as string);
                     socket?.emit('getLog', {
                       serverName: serverName,
