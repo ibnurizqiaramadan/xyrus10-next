@@ -140,7 +140,7 @@ export default function ToolsPage() {
   const tabsData: tabsType = [
     {
       id: 'chart-overall',
-      label: 'Over All',
+      label: 'All Core',
       active: true,
       content: <CpuChart
         id="perCpuChart2"
