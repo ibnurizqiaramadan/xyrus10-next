@@ -5,4 +5,5 @@ export type CpuData = {
   speed: number,
   uptime: string,
   cores: Number[]
+  coresAll: Number[]
 }
