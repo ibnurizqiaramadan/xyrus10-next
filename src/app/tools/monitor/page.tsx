@@ -139,17 +139,6 @@ export default function ToolsPage() {
 
   const tabsData: tabsType = [
     {
-      id: 'chart-percore',
-      label: 'Per Core',
-      content: <CpuChart
-        id="perCpuChart1"
-        name={serverName}
-        cores={cpuData.cores as number[]}
-        threads={cpuData.threads}
-        dataLenght={totalDataSave}
-      />,
-    },
-    {
       id: 'chart-overall',
       label: 'Over All',
       active: true,
@@ -160,6 +149,17 @@ export default function ToolsPage() {
         threads={cpuData.threads}
         dataLenght={totalDataSave}
         storageName={`${serverName}-cpu-all`}
+      />,
+    },
+    {
+      id: 'chart-percore',
+      label: 'Per Core',
+      content: <CpuChart
+        id="perCpuChart1"
+        name={serverName}
+        cores={cpuData.cores as number[]}
+        threads={cpuData.threads}
+        dataLenght={totalDataSave}
       />,
     },
   ];
