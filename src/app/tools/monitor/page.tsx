@@ -183,26 +183,26 @@ export default function ToolsPage() {
             title={cpuData.name}
             content={(
               <div className='flex flex-col-reverse space-x-4  lg:flex-row md:flex-row'>
-                <div className='lg:w-1/6 md:w-1/6 sm:w-full rounded-lg p-4'>
-                  <div>
+                <div className='lg:w-1/6 md:w-1/6 sm:w-full rounded-lg p-4 text-center md:text-left'>
+                  <div className='flex justify-between md:flex-col'>
                     <div>Uptime</div>
                     <div className='font-bold'>{cpuData.uptime.split('.')[0]}</div>
                   </div>
-                  <div>
+                  <div className='flex justify-between md:flex-col'>
                     <div>Usage</div>
                     <div className='font-bold'>{cpuData.usage.toFixed(2)} %</div>
                   </div>
-                  <div>
+                  <div className='flex justify-between md:flex-col'>
                     <div>Speed</div>
                     <div className='font-bold'>{cpuData.speed.toLocaleString(undefined, { maximumFractionDigits: 0 })} Mhz</div>
                   </div>
-                  <div>
+                  <div className='flex justify-between md:flex-col'>
                     <div>Threads</div>
                     <div className='font-bold'>{cpuData.threads}</div>
                   </div>
                 </div>
                 <div className='lg:w-5/6 md:w-5/6 sm:w-full h-full pt-2' style={{ marginLeft: '0px' }}>
-                  <Tabs aria-label="Dynamic tabs" items={tabsData} variant='underlined' selectedKey={selectedTabs} onSelectionChange={(key: React.Key) => {
+                  <Tabs aria-label="Dynamic tabs" className='w-full justify-center md:justify-end' items={tabsData} variant='underlined' selectedKey={selectedTabs} onSelectionChange={(key: React.Key) => {
                     dispatch(set(key as string));
                     localStorage.setItem('selectedTabs', key as string);
                     socket?.emit('getLog', {
