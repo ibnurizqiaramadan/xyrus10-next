@@ -26,6 +26,7 @@ export const CpuChart = (props: {
 }): JSX.Element => {
   const myChartRef = useRef<Chart | null>(null);
   const dataLenght = props.dataLenght ?? 60;
+  const randomColor = () => Math.floor(Math.random() * 255) + 1;
 
   useEffect(() => {
     Chart.register(...registerables);
@@ -85,7 +86,6 @@ export const CpuChart = (props: {
     });
 
     for (let index = 0; index < Number(props.storageName !== undefined ? 1 : props.threads); index++) {
-      const randomColor = () => Math.floor(Math.random() * 255) + 1;
       const r = randomColor();
       const g = randomColor();
       const b = randomColor();
