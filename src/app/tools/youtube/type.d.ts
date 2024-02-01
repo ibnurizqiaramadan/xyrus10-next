@@ -47,5 +47,6 @@ export type Video = {
     duration: string;
     thumbnail: string;
   } | null,
-  formats: Format[]
+  formats: Format[],
+  raw?: any
 }
