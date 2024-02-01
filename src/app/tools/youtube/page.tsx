@@ -25,6 +25,7 @@ const YoutubPage = () => {
 
   return (
     <div className="flex justify-center flex-col">
+      <title> Youtube Video Downloader </title>
       <h1 className="text-2xl text-center my-5">Youtube Video Downloader</h1>
       <div className="flex flex-col items-center gap-6">
         <Input
