@@ -32,7 +32,8 @@
         "new-cap": 0,
         "no-multiple-empty-lines": 0,
         "no-unsafe-finally": "off",
-        "no-console": 0
+        "no-console": 0,
+        "no-mixed-spaces-and-tabs": 0
     },
     "env": {
         "amd": true
