@@ -78,6 +78,14 @@ export default function App() {
             >
               Monitor
             </DropdownItem>
+            <DropdownItem
+              key="monitor"
+              description="Youtube audio and video downloader"
+              startContent={''}
+              onClick={() => router.push('/tools/youtube')}
+            >
+              Youtube Downloader
+            </DropdownItem>
           </DropdownMenu>
         </Dropdown>
         <NavbarItem {...{ isActive: path.includes('/servers') }}>

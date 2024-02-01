@@ -11,12 +11,14 @@ export default function ToolsPage() {
     <>
       <title>Tools that I use</title>
       <meta name="description" content="Tools that I use" />
-      <>
-
+      <div className='flex gap-3'>
         <Button className='mt-2 bg-slate-700'>
           <Link href="/tools/monitor">Monitor</Link>
         </Button>
-      </>
+        <Button className='mt-2 bg-slate-700'>
+          <Link href="/tools/youtube">Youtube Video Downloader</Link>
+        </Button>
+      </div>
     </>
   );
 }
