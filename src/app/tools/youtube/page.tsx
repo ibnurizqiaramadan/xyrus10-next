@@ -7,6 +7,7 @@ import { useRef, useState } from 'react';
 import { formatBytes } from '@/helper/Function';
 import { Image } from '@nextui-org/react';
 import React from 'react';
+import { searchVideo } from './searchYoutube';
 
 const YoutubPage = (): React.JSX.Element => {
   const [ formats, setFormats ] = useState<Video['formats']>([]);
@@ -33,21 +34,29 @@ const YoutubPage = (): React.JSX.Element => {
 
   return (
     <div className="flex justify-center flex-col">
-      <title> Youtube Video Downloader </title>
-      <h1 className="text-2xl text-center my-5">Youtube Video Downloader</h1>
+      <title>Youtube Video and Audio Downloader</title>
+      <h1 className="text-2xl text-center my-5">Youtube Downloader</h1>
       <div className="flex flex-col items-center gap-6">
         <Input
           className='bg-inherit lg:w-6/12 md:w-6/12 sm:w-6/12 text-center'
-          label="Youtube URL"
+          label="Youtube video title or video URL"
           variant='underlined'
           labelPlacement="outside"
           type="text"
+          inputMode='search'
           onPaste={async (e) => {
             getData(e.clipboardData.getData('text/plain'));
           }}
           onKeyUp={async (e) => {
             if (e.key === 'Enter') {
-              getData(e.currentTarget.value);
+              const input: string = e.currentTarget.value;
+              if (input.trim() == '') return;
+              if (input.startsWith('https://')) return getData(input);
+              setLoading(true);
+              setDetails(null);
+              setFormats([]);
+              const data = await searchVideo(e.currentTarget.value);
+              getData(data[0].url);
             }
           }}
         />
