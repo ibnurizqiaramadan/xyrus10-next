@@ -4,7 +4,9 @@ import { Video } from './type';
 import { create } from 'youtube-dl-exec';
 import _ from 'lodash';
 import { redis } from '@/helper/redis';
-const youtubedl = create('yt-dlp');
+import getConfig from 'next/config';
+const { serverRuntimeConfig } = getConfig();
+const youtubedl = create(serverRuntimeConfig.ytDlPath);
 
 /**
  * Filters the formats to retrieve only those with the 'mp4' extension
