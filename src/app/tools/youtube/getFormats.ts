@@ -3,6 +3,7 @@
 import { Video } from './type';
 import { create } from 'youtube-dl-exec';
 import _ from 'lodash';
+import { redis } from '@/helper/redis';
 const youtubedl = create('yt-dlp');
 
 /**
@@ -25,8 +26,17 @@ const checkFormat = (output:any): Array<any> => {
  * @return {Promise<Video>} A Promise that resolves with video details and formats
  */
 export const getFormats = (url: string): Promise<Video> => {
+  const redisKey = `youtube:${url}`;
   // eslint-disable-next-line no-async-promise-executor
   return new Promise<Video>(async (resolve, reject) => {
+    const getDataFromRedis: Video = await redis.hGetAll(redisKey) as unknown as Video;
+    if (getDataFromRedis.details) {
+      return resolve({
+        details: JSON.parse(String(getDataFromRedis.details)),
+        formats: JSON.parse(String(getDataFromRedis.formats)),
+      });
+    }
+
     youtubedl(url, {
       dumpSingleJson: true,
       noCheckCertificates: true,
@@ -38,6 +48,17 @@ export const getFormats = (url: string): Promise<Video> => {
       const filter = checkFormat(output);
       if (filter.length == 0) return [];
       const result = _.orderBy(filter, [ 'audio_channels', 'height' ], [ 'asc', 'desc' ]);
+      redis.hSet(redisKey, {
+        details: JSON.stringify({
+          title: output.fulltitle,
+          thumbnail: output.thumbnail,
+          duration: output.duration_string,
+          channel: output.channel,
+          channelUrl: output.channel_url,
+        }),
+        formats: JSON.stringify(result),
+      });
+      redis.expire(redisKey, (60 * 60) * 2);
       resolve({
         details: {
           title: output.fulltitle,
