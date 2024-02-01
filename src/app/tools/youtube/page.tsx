@@ -6,18 +6,28 @@ import { Video } from './type';
 import { useRef, useState } from 'react';
 import { formatBytes } from '@/helper/Function';
 import { Image } from '@nextui-org/react';
+import React from 'react';
 
-const YoutubPage = () => {
+const YoutubPage = (): React.JSX.Element => {
   const [ formats, setFormats ] = useState<Video['formats']>([]);
   const [ loading, setLoading ] = useState<boolean>(false);
   const [ details, setDetails ] = useState<Video['details']>(null);
   const formatSelected = useRef<HTMLSelectElement | null>(null);
 
-  const getData = async (url: string) => {
+  /**
+   * Fetches data from the specified URL and updates the state accordingly.
+   *
+   * @param {string} url - the URL to fetch data from
+   * @return {Promise<void>} a Promise that resolves when the data is fetched and the state is updated
+   */
+  const getData = async (url: string): Promise<void> => {
     setLoading(true);
     setDetails(null);
     setFormats([]);
+    formatSelected.current?.removeAttribute('value');
     const video = await getFormats(url);
+    console.log(video.raw);
+
     setDetails(video.details);
     setFormats(video.formats);
     setLoading(false);
@@ -59,7 +69,7 @@ const YoutubPage = () => {
         >
           {formats.map((format, index) => (
             <SelectItem key={format.url} value={format.url} className="text-center">
-              {`${format.format_note} ${format.audio_channels > 0 ? '' : '(Muted)'} - ${format.filesize ? formatBytes(format.filesize) : formatBytes(format.filesize_approx)}`}
+              {`${format.ext == 'mp4' ? `video ${format.format_note}` : format.format.split('-')[1]} ${format.audio_channels > 0 ? '' : '(Muted)'} - ${format.filesize ? formatBytes(format.filesize) : formatBytes(format.filesize_approx)}`}
             </SelectItem>
           ))}
         </Select>

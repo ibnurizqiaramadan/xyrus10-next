@@ -14,7 +14,7 @@ const youtubedl = create('yt-dlp');
  */
 const checkFormat = (output:any): Array<any> => {
   return output.formats.filter((x:any) =>
-    x.ext === 'mp4' && !String(x.url).includes('manifest.googlevideo.com')
+    (x.ext === 'mp4' || x.ext === 'm4a') && !String(x.url).includes('manifest.googlevideo.com')
   );
 };
 
@@ -31,7 +31,6 @@ export const getFormats = (url: string): Promise<Video> => {
       dumpSingleJson: true,
       noCheckCertificates: true,
       noWarnings: true,
-      preferFreeFormats: true,
     }).then((output:any) => {
       if (!output) {
         return resolve({ details: null, formats: [] });
@@ -48,6 +47,7 @@ export const getFormats = (url: string): Promise<Video> => {
           channelUrl: output.channel_url,
         },
         formats: result,
+        raw: output,
       });
     }).catch((err:any) => {
       console.log(err);
