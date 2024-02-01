@@ -26,8 +26,6 @@ const YoutubPage = (): React.JSX.Element => {
     setFormats([]);
     formatSelected.current?.removeAttribute('value');
     const video = await getFormats(url);
-    console.log(video.raw);
-
     setDetails(video.details);
     setFormats(video.formats);
     setLoading(false);
@@ -77,8 +75,6 @@ const YoutubPage = (): React.JSX.Element => {
           disabled={formatSelected.current?.value == null}
           onClick={() => {
             const selected = formatSelected.current?.value;
-            console.log(formatSelected.current?.value);
-
             if (selected) {
               window.open(selected, '_blank');
             }
