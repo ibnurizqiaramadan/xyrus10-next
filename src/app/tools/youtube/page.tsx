@@ -13,6 +13,16 @@ const YoutubPage = () => {
   const [ details, setDetails ] = useState<Video['details']>(null);
   const formatSelected = useRef<HTMLSelectElement | null>(null);
 
+  const getData = async (url: string) => {
+    setLoading(true);
+    setDetails(null);
+    setFormats([]);
+    const video = await getFormats(url);
+    setDetails(video.details);
+    setFormats(video.formats);
+    setLoading(false);
+  };
+
   return (
     <div className="flex justify-center flex-col">
       <h1 className="text-2xl text-center my-5">Youtube Video Downloader</h1>
@@ -23,16 +33,12 @@ const YoutubPage = () => {
           variant='underlined'
           labelPlacement="outside"
           type="text"
+          onPaste={async (e) => {
+            getData(e.clipboardData.getData('text/plain'));
+          }}
           onKeyUp={async (e) => {
-            if (e.key === 'Enter' || (e.ctrlKey && e.key === 'v')) {
-              setLoading(true);
-              setDetails(null);
-              setFormats([]);
-              const video = await getFormats(e.currentTarget.value);
-              console.log(video);
-              setDetails(video.details);
-              setFormats(video.formats);
-              setLoading(false);
+            if (e.key === 'Enter') {
+              getData(e.currentTarget.value);
             }
           }}
         />
