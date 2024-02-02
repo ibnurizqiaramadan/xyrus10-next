@@ -24,7 +24,7 @@ const YoutubPage = (): React.JSX.Element => {
 
   useEffect(() => {
     if (videoId) {
-      getData(`https://youtube.com/watch?v=${videoId}`);
+      getData(`https://www.youtube.com/watch?v=${videoId}`);
       setInputValue(`https://www.youtube.com/watch?v=${videoId}`);
       setVideoIdInput('');
       params.replace('/tools/youtube');
