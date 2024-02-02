@@ -3,18 +3,33 @@
 import { Input, Button, Select, SelectItem } from '@nextui-org/react';
 import { getFormats } from './getFormats';
 import { Video } from './type';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { formatBytes } from '@/helper/Function';
 import { Image } from '@nextui-org/react';
 import React from 'react';
 import { searchVideo } from './searchYoutube';
+import { useSearchParams, useRouter } from 'next/navigation';
 
 const YoutubPage = (): React.JSX.Element => {
+  const params = useRouter();
   const [ formats, setFormats ] = useState<Video['formats']>([]);
   const [ loading, setLoading ] = useState<boolean>(false);
   const [ details, setDetails ] = useState<Video['details']>(null);
   const formatSelected = useRef<HTMLSelectElement | null>(null);
   const inputText = useRef<HTMLInputElement | null>(null);
+  const searchParams = useSearchParams();
+  const videoId = searchParams.get('v');
+  const [ videoIdInput, setVideoIdInput ] = useState<string>(videoId ?? '');
+  const [ inputValue, setInputValue ] = useState<string>('');
+
+  useEffect(() => {
+    if (videoId) {
+      getData(`https://youtube.com/watch?v=${videoId}`);
+      setInputValue(`https://www.youtube.com/watch?v=${videoId}`);
+      setVideoIdInput('');
+      params.replace('/tools/youtube');
+    }
+  }, [ params, videoId, videoIdInput ]);
 
   /**
    * Fetches data from the specified URL and updates the state accordingly.
@@ -47,6 +62,8 @@ const YoutubPage = (): React.JSX.Element => {
             labelPlacement="outside"
             type="text"
             inputMode='search'
+            value={videoIdInput.trim() != '' ? `https://www.youtube.com/watch?v=${videoIdInput}` : inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
             onPaste={async (e) => {
               getData(e.clipboardData.getData('text/plain'));
             }}
