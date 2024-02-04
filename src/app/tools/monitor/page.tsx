@@ -4,13 +4,15 @@ import { io, Socket } from 'socket.io-client';
 // eslint-disable-next-line no-unused-vars
 import style from './style.module.scss';
 import { Container } from './Container';
-import { CpuData } from './type';
+import { CpuData, MemoryStorage } from './type';
 import { CpuChart } from './CpuChart';
 import { Card, CardBody, Input, Tab, Tabs } from '@nextui-org/react';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import { set } from '@/features/monitor/tabSelectedSlice';
+import { Progress } from '@nextui-org/react';
+import { formatBytes } from '@/helper/Function';
 
 export default function ToolsPage() {
   const [ serverName, setServerName ] = useState('');
@@ -32,6 +34,16 @@ export default function ToolsPage() {
     coresAll: [],
   } as CpuData);
 
+  const [ memoryStorage, setMemoryStorage ] = useState({
+    disk: [],
+    memPercent: 0,
+    memTotal: 0,
+    memUsed: 0,
+    swapPercent: 0,
+    swapTotal: 0,
+    swapUsed: 0,
+  } as unknown as MemoryStorage);
+
   useEffect(() => {
     const socket = io('https://socket-monitor.xyrus10.com');
     setServerName(localStorage.getItem('serverName') ?? 'xyrus10-vps1');
@@ -49,7 +61,7 @@ export default function ToolsPage() {
       const jsonData = JSON?.parse(datas[0]?? []) ?? [];
       const cpuCount = jsonData.cpus.length;
 
-      for (let index = 0; index < cpuCount; index++) {
+      for (let index = 1; index <= cpuCount; index++) {
         const storageName: String = `${jsonData.target}-cpu-${index}`;
         storageData[storageName as keyof typeof storageData] = [];
       }
@@ -60,7 +72,7 @@ export default function ToolsPage() {
         const storageNameCpuAll: String = `${jsonData.target}-cpu-all`;
 
         cpus.forEach((cpu, index) => {
-          const storageName: String = `${jsonData.target}-cpu-${index}`;
+          const storageName: String = `${jsonData.target}-cpu-${(index + 1)}`;
           const storageValue = storageData[storageName as keyof typeof storageData];
           storageValue.push(cpu);
           storageData[storageName as keyof typeof storageData] = storageValue;
@@ -97,6 +109,15 @@ export default function ToolsPage() {
           cores: CPU_CORES,
           coresAll: [ cpusUsage ],
         } as CpuData);
+        setMemoryStorage({
+          disks: msg?.['disks'],
+          memPercent: msg?.['mem-percent'],
+          memTotal: msg?.['mem-total'],
+          memUsed: msg?.['mem-used'],
+          swapPercent: msg?.['swap-percent'],
+          swapTotal: msg?.['swap-total'],
+          swapUsed: msg?.['swap-used'],
+        });
       }
     });
 
@@ -222,6 +243,71 @@ export default function ToolsPage() {
                 </div>
               </div>
             )}
+          />
+        </div>
+        <div className='flex space-x-4 mt-4'>
+          <Container
+            title='Memory and Storage'
+            content={
+              <div className='px-2 pb-2'>
+                <Progress
+                  size="lg"
+                  radius="sm"
+                  classNames={{
+                    base: 'w-full mt-2',
+                    track: 'drop-shadow-md border border-default',
+                    indicator: memoryStorage.memPercent > 90 ? 'bg-red-600' : memoryStorage.memPercent > 70 ? 'bg-yellow-600' : 'bg-green-600',
+                    label: 'tracking-wider font-medium text-default-600',
+                    value: 'text-foreground/60',
+                  }}
+                  maxValue={memoryStorage.memTotal}
+                  label={`Ram (${formatBytes(memoryStorage.memUsed)} / ${formatBytes(memoryStorage.memTotal)})`}
+                  value={memoryStorage.memUsed}
+                  showValueLabel={true}
+                />
+                <Progress
+                  size="lg"
+                  radius="sm"
+                  classNames={{
+                    base: 'w-full mt-2',
+                    track: 'drop-shadow-md border border-default',
+                    indicator: memoryStorage.swapUsed > 90 ? 'bg-red-600' : memoryStorage.swapUsed > 70 ? 'bg-yellow-600' : 'bg-green-600',
+                    label: 'tracking-wider font-medium text-default-600',
+                    value: 'text-foreground/60',
+                  }}
+                  maxValue={memoryStorage.swapTotal}
+                  label={`Swap (${formatBytes(memoryStorage.swapUsed)} / ${formatBytes(memoryStorage.swapTotal)})`}
+                  value={memoryStorage.swapUsed}
+                  showValueLabel={true}
+                />
+                {memoryStorage.disks?.map((disk, index) => {
+                  if (disk.device.startsWith('/') || disk.device.includes('\\')) {
+                    const diskPercent = disk.used / disk.total * 100;
+                    let indicatorColor = 'bg-green-600';
+                    if (diskPercent > 90) indicatorColor = 'bg-red-600';
+                    if (diskPercent > 70) indicatorColor = 'bg-yellow-600';
+                    return (
+                      <Progress
+                        key={index}
+                        size="lg"
+                        radius="sm"
+                        classNames={{
+                          base: 'w-full mt-2',
+                          track: 'drop-shadow-md border border-default',
+                          indicator: indicatorColor,
+                          label: 'tracking-wider font-medium text-default-600',
+                          value: 'text-foreground/60',
+                        }}
+                        maxValue={disk.total}
+                        label={`${disk.device} (${formatBytes(disk.used)} / ${formatBytes(disk.total)})`}
+                        value={disk.used}
+                        showValueLabel={true}
+                      />
+                    );
+                  }
+                })}
+              </div>
+            }
           />
         </div>
       </main>

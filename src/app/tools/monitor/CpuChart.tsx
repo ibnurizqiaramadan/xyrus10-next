@@ -22,7 +22,8 @@ export const CpuChart = (props: {
   threads: number,
   name: string,
   dataLenght?: number,
-  storageName?: string
+  storageName?: string,
+  className?: string|undefined
 }): JSX.Element => {
   const myChartRef = useRef<Chart | null>(null);
   const dataLenght = props.dataLenght ?? 60;
@@ -85,7 +86,7 @@ export const CpuChart = (props: {
       },
     });
 
-    for (let index = 0; index < Number(props.storageName !== undefined ? 1 : props.threads); index++) {
+    for (let index = 1; index <= Number(props.storageName !== undefined ? 1 : props.threads); index++) {
       const r = randomColor();
       const g = randomColor();
       const b = randomColor();
@@ -111,7 +112,7 @@ export const CpuChart = (props: {
       });
     }
 
-    myChartRef.current?.update();
+    // myChartRef.current?.update();
 
     return () => {
       myChartRef.current?.destroy();
@@ -138,7 +139,7 @@ export const CpuChart = (props: {
   }, [ props.cores, props.name, dataLenght, props.storageName ]);
 
   return (
-    <div className='h-full w-full'>
+    <div className={'h-full w-full ' + props.className}>
       <canvas id={props.id}></canvas>
     </div>
   );
