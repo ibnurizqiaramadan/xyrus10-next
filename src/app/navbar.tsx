@@ -79,7 +79,7 @@ export default function App() {
               Monitor
             </DropdownItem>
             <DropdownItem
-              key="monitor"
+              key="youtube"
               description="Youtube audio and video downloader"
               startContent={''}
               onClick={() => router.push('/tools/youtube')}
