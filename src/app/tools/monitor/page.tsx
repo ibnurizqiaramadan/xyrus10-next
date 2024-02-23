@@ -274,7 +274,7 @@ export default function ToolsPage() {
                   classNames={{
                     base: 'w-full mt-2',
                     track: 'drop-shadow-md border border-default',
-                    indicator: memoryStorage.swapUsed > 90 ? 'bg-red-600' : memoryStorage.swapUsed > 70 ? 'bg-yellow-600' : 'bg-green-600',
+                    indicator: formatBytes(memoryStorage.swapUsed, false) as number > 90 ? 'bg-red-600' : formatBytes(memoryStorage.swapUsed, false) as number > 70 ? 'bg-yellow-600' : 'bg-green-600',
                     label: 'tracking-wider font-medium text-default-600',
                     value: 'text-foreground/60',
                   }}
@@ -289,18 +289,20 @@ export default function ToolsPage() {
                     let indicatorColor = 'bg-green-600';
                     if (diskPercent > 90) indicatorColor = 'bg-red-600';
                     if (diskPercent > 70) indicatorColor = 'bg-yellow-600';
+                    const proggressStyle = {
+                      base: 'w-full mt-2',
+                      track: 'drop-shadow-md border border-default',
+                      indicator: indicatorColor,
+                      label: 'tracking-wider font-medium text-default-600',
+                      value: 'text-foreground/60',
+                    };
+
                     return (
                       <Progress
                         key={index}
                         size="lg"
                         radius="sm"
-                        classNames={{
-                          base: 'w-full mt-2',
-                          track: 'drop-shadow-md border border-default',
-                          indicator: indicatorColor,
-                          label: 'tracking-wider font-medium text-default-600',
-                          value: 'text-foreground/60',
-                        }}
+                        classNames={proggressStyle}
                         maxValue={disk.total}
                         label={`${disk.device} (${formatBytes(disk.used)} / ${formatBytes(disk.total)})`}
                         value={disk.used}
