@@ -134,7 +134,7 @@ export default function ToolsPage() {
       socket.close();
       socket.disconnect();
     };
-  }, [ serverName, readData, totalDataSave ]);
+  }, [ serverName, readData, totalDataSave, params ]);
 
   const serverKeyUpHandlers = (event:KeyboardEvent<HTMLInputElement>) => {
     const input = (event.target as HTMLInputElement);
