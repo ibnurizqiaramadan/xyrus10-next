@@ -13,8 +13,10 @@ import { RootState } from '@/store/store';
 import { set } from '@/features/monitor/tabSelectedSlice';
 import { Progress } from '@nextui-org/react';
 import { formatBytes } from '@/helper/Function';
+import { useSearchParams } from 'next/navigation';
 
 export default function ToolsPage() {
+  const params = useSearchParams();
   const [ serverName, setServerName ] = useState('');
   const [ serverNameInput, setServerNameInput ] = useState('');
   const [ socket, setSocket ] = useState<Socket|null>(null);
@@ -45,8 +47,9 @@ export default function ToolsPage() {
   } as unknown as MemoryStorage);
 
   useEffect(() => {
+    const serverNameByParams = params.get('server') ?? '';
     const socket = io('https://socket-monitor.xyrus10.com');
-    setServerName(localStorage.getItem('serverName') ?? 'xyrus10-vps1');
+    setServerName(serverNameByParams != '' ? serverNameByParams : localStorage.getItem('serverName') ?? 'xyrus10-vps1');
 
     socket.on('connect', () => {
       setSocket(socket);
