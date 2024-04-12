@@ -1,6 +1,6 @@
 'use server';
 
-import { Video } from './type';
+import { Video } from '@/helper/type';
 import { create } from 'youtube-dl-exec';
 import _ from 'lodash';
 import { redis } from '@/helper/redis';

@@ -2,7 +2,7 @@
 
 import { Input, Button, Select, SelectItem } from '@nextui-org/react';
 import { getFormats } from './getFormats';
-import { Video } from './type';
+import { Video } from '@/helper/type';
 import { useEffect, useRef, useState } from 'react';
 import { formatBytes } from '@/helper/Function';
 import { Image } from '@nextui-org/react';
