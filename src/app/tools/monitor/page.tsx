@@ -4,7 +4,7 @@ import { io, Socket } from 'socket.io-client';
 // eslint-disable-next-line no-unused-vars
 import style from './style.module.scss';
 import { Container } from './Container';
-import { CpuData, MemoryStorage } from './type';
+import { CpuData, MemoryStorage } from '@/helper/type';
 import { CpuChart } from './CpuChart';
 import { Card, CardBody, Input, Tab, Tabs } from '@nextui-org/react';
 import React from 'react';
@@ -120,9 +120,10 @@ export default function ToolsPage() {
           swapPercent: msg?.['swap-percent'],
           swapTotal: msg?.['swap-total'],
           swapUsed: msg?.['swap-used'],
-        });
+        } as MemoryStorage);
       }
     });
+
 
     socket?.emit('getLog', {
       serverName: serverName,
@@ -274,7 +275,7 @@ export default function ToolsPage() {
                   classNames={{
                     base: 'w-full mt-2',
                     track: 'drop-shadow-md border border-default',
-                    indicator: formatBytes(memoryStorage.swapUsed, false) as number > 90 ? 'bg-red-600' : formatBytes(memoryStorage.swapUsed, false) as number > 70 ? 'bg-yellow-600' : 'bg-green-600',
+                    indicator: formatBytes(memoryStorage.swapPercent, false) as number > 90 ? 'bg-red-600' : formatBytes(memoryStorage.swapPercent, false) as number > 70 ? 'bg-yellow-600' : 'bg-green-600',
                     label: 'tracking-wider font-medium text-default-600',
                     value: 'text-foreground/60',
                   }}
@@ -292,7 +293,7 @@ export default function ToolsPage() {
                     const proggressStyle = {
                       base: 'w-full mt-2',
                       track: 'drop-shadow-md border border-default',
-                      indicator: indicatorColor,
+                      indicator: indicatorColor.toString(),
                       label: 'tracking-wider font-medium text-default-600',
                       value: 'text-foreground/60',
                     };
