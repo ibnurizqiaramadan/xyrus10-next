@@ -257,10 +257,10 @@ export default function ToolsPage() {
                 <Progress
                   size="lg"
                   radius="sm"
+                  color={memoryStorage.memPercent > 90 ? 'danger' : memoryStorage.memPercent > 70 ? 'warning' : 'success'}
                   classNames={{
                     base: 'w-full mt-2',
                     track: 'drop-shadow-md border border-default',
-                    indicator: memoryStorage.memPercent > 90 ? 'bg-red-600' : memoryStorage.memPercent > 70 ? 'bg-yellow-600' : 'bg-green-600',
                     label: 'tracking-wider font-medium text-default-600',
                     value: 'text-foreground/60',
                   }}
@@ -272,10 +272,10 @@ export default function ToolsPage() {
                 <Progress
                   size="lg"
                   radius="sm"
+                  color={memoryStorage.swapPercent > 90 ? 'danger' : memoryStorage.swapPercent > 70 ? 'warning' : 'success'}
                   classNames={{
                     base: 'w-full mt-2',
                     track: 'drop-shadow-md border border-default',
-                    indicator: formatBytes(memoryStorage.swapPercent, false) as number > 90 ? 'bg-red-600' : formatBytes(memoryStorage.swapPercent, false) as number > 70 ? 'bg-yellow-600' : 'bg-green-600',
                     label: 'tracking-wider font-medium text-default-600',
                     value: 'text-foreground/60',
                   }}
@@ -287,13 +287,9 @@ export default function ToolsPage() {
                 {memoryStorage.disks?.map((disk, index) => {
                   if (disk.device.startsWith('/') || disk.device.includes('\\')) {
                     const diskPercent = disk.used / disk.total * 100;
-                    let indicatorColor = 'bg-green-600';
-                    if (diskPercent > 90) indicatorColor = 'bg-red-600';
-                    if (diskPercent > 70) indicatorColor = 'bg-yellow-600';
                     const proggressStyle = {
                       base: 'w-full mt-2',
                       track: 'drop-shadow-md border border-default',
-                      indicator: indicatorColor.toString(),
                       label: 'tracking-wider font-medium text-default-600',
                       value: 'text-foreground/60',
                     };
@@ -303,6 +299,7 @@ export default function ToolsPage() {
                         key={index}
                         size="lg"
                         radius="sm"
+                        color={diskPercent > 90 ? 'danger' : diskPercent > 70 ? 'warning' : 'success'}
                         classNames={proggressStyle}
                         maxValue={disk.total}
                         label={`${disk.device} (${formatBytes(disk.used)} / ${formatBytes(disk.total)})`}
