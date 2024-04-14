@@ -11,6 +11,7 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import { setSelectedTab } from '@/features/monitor/tabSelectedSlice';
+import { setMonitorData } from '@/features/monitor/monitorDataSlice';
 import { Progress } from '@nextui-org/react';
 import { formatBytes } from '@/helper/Function';
 import { useSearchParams } from 'next/navigation';
@@ -23,28 +24,9 @@ export default function ToolsPage() {
   const [ readData, setReadData ] = useState(false);
   const [ totalDataSave, setTotalDataSave ] = useState(0);
   const selectedTabs = useSelector((state: RootState) => state.selectedTabMonitor.value);
+  const monitorData = useSelector((state: RootState) => state.monitorData);
 
   const dispatch = useDispatch();
-  // eslint-disable-next-line no-unused-vars
-  const [ cpuData, setCpuData ]: [ CpuData, any ] = useState({
-    name: '-',
-    speed: 0,
-    threads: 0,
-    usage: 0,
-    uptime: '-',
-    cores: [ ],
-    coresAll: [],
-  } as CpuData);
-
-  const [ memoryStorage, setMemoryStorage ] = useState({
-    disk: [],
-    memPercent: 0,
-    memTotal: 0,
-    memUsed: 0,
-    swapPercent: 0,
-    swapTotal: 0,
-    swapUsed: 0,
-  } as unknown as MemoryStorage);
 
   useEffect(() => {
     const serverNameByParams = params.get('server') ?? '';
@@ -101,24 +83,25 @@ export default function ToolsPage() {
 
       const cpusUsage = Number(parseFloat(CPUS.reduce((partialSum: any, a: any) => partialSum + a, 0)).toFixed(2)) / msg.cpus.length;
       if (readData) {
-        setCpuData({
-          name: CPU_NAME,
-          speed: Number(CPU_SPEED),
-          threads: msg?.['cpu-count'],
-          usage: cpusUsage,
-          uptime: msg?.uptime,
-          cores: CPU_CORES,
-          coresAll: [ cpusUsage ],
-        } as CpuData);
-        setMemoryStorage({
-          disks: msg?.['disks'],
-          memPercent: msg?.['mem-percent'],
-          memTotal: msg?.['mem-total'],
-          memUsed: msg?.['mem-used'],
-          swapPercent: msg?.['swap-percent'],
-          swapTotal: msg?.['swap-total'],
-          swapUsed: msg?.['swap-used'],
-        } as MemoryStorage);
+        dispatch(setMonitorData({
+          cpuData: {
+            name: CPU_NAME,
+            speed: Number(CPU_SPEED),
+            threads: msg?.['cpu-count'],
+            usage: cpusUsage,
+            uptime: msg?.uptime,
+            cores: CPU_CORES,
+            coresAll: [ cpusUsage ],
+          } as CpuData,
+          memoryStorage: { disks: msg?.['disks'],
+            memPercent: msg?.['mem-percent'],
+            memTotal: msg?.['mem-total'],
+            memUsed: msg?.['mem-used'],
+            swapPercent: msg?.['swap-percent'],
+            swapTotal: msg?.['swap-total'],
+            swapUsed: msg?.['swap-used'],
+          } as MemoryStorage,
+        }));
       }
     });
 
@@ -133,7 +116,11 @@ export default function ToolsPage() {
       socket.close();
       socket.disconnect();
     };
-  }, [ serverName, readData, totalDataSave, params ]);
+  }, [ serverName, readData, totalDataSave, params, dispatch ]);
+
+  useEffect(() => {
+    console.log('Redux Store: ', monitorData);
+  });
 
   const serverKeyUpHandlers = (event:KeyboardEvent<HTMLInputElement>) => {
     const input = (event.target as HTMLInputElement);
@@ -168,8 +155,8 @@ export default function ToolsPage() {
       content: <CpuChart
         id="perCpuChart2"
         name={serverName}
-        cores={cpuData.coresAll as number[]}
-        threads={cpuData.threads}
+        cores={monitorData.cpuData.coresAll as number[]}
+        threads={monitorData.cpuData.threads}
         dataLenght={totalDataSave}
         storageName={`${serverName}-cpu-all`}
       />,
@@ -180,8 +167,8 @@ export default function ToolsPage() {
       content: <CpuChart
         id="perCpuChart1"
         name={serverName}
-        cores={cpuData.cores as number[]}
-        threads={cpuData.threads}
+        cores={monitorData.cpuData.cores as number[]}
+        threads={monitorData.cpuData.threads}
         dataLenght={totalDataSave}
       />,
     },
@@ -203,25 +190,25 @@ export default function ToolsPage() {
         </div>
         <div className='flex space-x-4 mt-4'>
           <Container
-            title={cpuData.name}
+            title={monitorData.cpuData.name}
             content={(
               <div className='flex flex-col-reverse space-x-4  lg:flex-row md:flex-row'>
                 <div className='lg:w-1/6 md:w-1/6 sm:w-full rounded-lg p-4 text-center md:text-left'>
                   <div className='flex justify-between md:flex-col'>
                     <div>Uptime</div>
-                    <div className='font-bold'>{cpuData.uptime.split('.')[0]}</div>
+                    <div className='font-bold'>{monitorData.cpuData.uptime.split('.')[0]}</div>
                   </div>
                   <div className='flex justify-between md:flex-col'>
                     <div>Usage</div>
-                    <div className='font-bold'>{cpuData.usage.toFixed(2)} %</div>
+                    <div className='font-bold'>{monitorData.cpuData.usage.toFixed(2)} %</div>
                   </div>
                   <div className='flex justify-between md:flex-col'>
                     <div>Speed</div>
-                    <div className='font-bold'>{cpuData.speed.toLocaleString(undefined, { maximumFractionDigits: 0 })} Mhz</div>
+                    <div className='font-bold'>{monitorData.cpuData.speed.toLocaleString(undefined, { maximumFractionDigits: 0 })} Mhz</div>
                   </div>
                   <div className='flex justify-between md:flex-col'>
                     <div>Threads</div>
-                    <div className='font-bold'>{cpuData.threads}</div>
+                    <div className='font-bold'>{monitorData.cpuData.threads}</div>
                   </div>
                 </div>
                 <div className='lg:w-5/6 md:w-5/6 sm:w-full h-full pt-2' style={{ marginLeft: '0px' }}>
@@ -255,34 +242,34 @@ export default function ToolsPage() {
                 <Progress
                   size="lg"
                   radius="sm"
-                  color={memoryStorage.memPercent > 90 ? 'danger' : memoryStorage.memPercent > 70 ? 'warning' : 'success'}
+                  color={monitorData.memoryStorage.memPercent > 90 ? 'danger' : monitorData.memoryStorage.memPercent > 70 ? 'warning' : 'success'}
                   classNames={{
                     base: 'w-full mt-2',
                     track: 'drop-shadow-md border border-default',
                     label: 'tracking-wider font-medium text-default-600',
                     value: 'text-foreground/60',
                   }}
-                  maxValue={memoryStorage.memTotal}
-                  label={`Ram (${formatBytes(memoryStorage.memUsed)} / ${formatBytes(memoryStorage.memTotal)})`}
-                  value={memoryStorage.memUsed}
+                  maxValue={monitorData.memoryStorage.memTotal}
+                  label={`Ram (${formatBytes(monitorData.memoryStorage.memUsed)} / ${formatBytes(monitorData.memoryStorage.memTotal)})`}
+                  value={monitorData.memoryStorage.memUsed}
                   showValueLabel={true}
                 />
                 <Progress
                   size="lg"
                   radius="sm"
-                  color={memoryStorage.swapPercent > 90 ? 'danger' : memoryStorage.swapPercent > 70 ? 'warning' : 'success'}
+                  color={monitorData.memoryStorage.swapPercent > 90 ? 'danger' : monitorData.memoryStorage.swapPercent > 70 ? 'warning' : 'success'}
                   classNames={{
                     base: 'w-full mt-2',
                     track: 'drop-shadow-md border border-default',
                     label: 'tracking-wider font-medium text-default-600',
                     value: 'text-foreground/60',
                   }}
-                  maxValue={memoryStorage.swapTotal}
-                  label={`Swap (${formatBytes(memoryStorage.swapUsed)} / ${formatBytes(memoryStorage.swapTotal)})`}
-                  value={memoryStorage.swapUsed}
+                  maxValue={monitorData.memoryStorage.swapTotal}
+                  label={`Swap (${formatBytes(monitorData.memoryStorage.swapUsed)} / ${formatBytes(monitorData.memoryStorage.swapTotal)})`}
+                  value={monitorData.memoryStorage.swapUsed}
                   showValueLabel={true}
                 />
-                {memoryStorage.disks?.map((disk, index) => {
+                {monitorData.memoryStorage.disks?.map((disk, index) => {
                   if (disk.device.startsWith('/') || disk.device.includes('\\')) {
                     const diskPercent = disk.used / disk.total * 100;
                     const proggressStyle = {
