@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 
 import counterReducer from '../features/counter/counterSlice';
 import tabselectedReducer from '../features/monitor/tabSelectedSlice';
+import monitorDataReducer from '../features/monitor/monitorDataSlice';
 
 
 export const makeStore = () => {
@@ -9,6 +10,7 @@ export const makeStore = () => {
     reducer: {
       counter: counterReducer,
       selectedTabMonitor: tabselectedReducer,
+      monitorData: monitorDataReducer,
     },
   });
 };
