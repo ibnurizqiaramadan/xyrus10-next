@@ -37,6 +37,7 @@ export default function ToolsPage() {
       setSocket(socket);
     });
 
+    // TODO: store data to redux instead of localStorage
     socket.on('receiveLog', async (msg:any) => {
       const datas: Array<any> = msg.logData;
       const storageData: any = [];

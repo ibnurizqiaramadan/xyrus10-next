@@ -99,6 +99,7 @@ export const CpuChart = (props: {
         colorAll2 = `rgba(0, 255, 0, 0.1)`;
       }
 
+      // TODO: get data from redux instead of localstorage
       myChartRef.current?.data.datasets.push({
         label: `CPU ${props.storageName !== undefined ? 'All' : index}`,
         data: JSON.parse(localStorage.getItem(props.storageName !== undefined ? `${props.storageName}` : `${props.name}-cpu-${index}`) ?? '[]') as any[],
