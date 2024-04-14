@@ -119,10 +119,6 @@ export default function ToolsPage() {
     };
   }, [ serverName, readData, totalDataSave, params, dispatch ]);
 
-  useEffect(() => {
-    console.log('Redux Store: ', monitorData);
-  });
-
   const serverKeyUpHandlers = (event:KeyboardEvent<HTMLInputElement>) => {
     const input = (event.target as HTMLInputElement);
     if (event.key === 'Escape') {
