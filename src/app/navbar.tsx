@@ -4,7 +4,7 @@ import { Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle, Navba
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useDispatch } from 'react-redux';
-import { set } from '@/features/monitor/tabSelectedSlice';
+import { setSelectedTab } from '@/features/monitor/tabSelectedSlice';
 
 export default function App() {
   const [ isMenuOpen, setIsMenuOpen ] = React.useState(false);
@@ -29,7 +29,7 @@ export default function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(set(localStorage.getItem('selectedTabs') as string));
+    dispatch(setSelectedTab(localStorage.getItem('selectedTabs') as string));
   }, [ dispatch ]);
 
   return (

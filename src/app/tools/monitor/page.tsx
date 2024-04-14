@@ -10,7 +10,7 @@ import { Card, CardBody, Input, Tab, Tabs } from '@nextui-org/react';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
-import { set } from '@/features/monitor/tabSelectedSlice';
+import { setSelectedTab } from '@/features/monitor/tabSelectedSlice';
 import { Progress } from '@nextui-org/react';
 import { formatBytes } from '@/helper/Function';
 import { useSearchParams } from 'next/navigation';
@@ -89,8 +89,6 @@ export default function ToolsPage() {
         localStorage.setItem(key, JSON.stringify(storageData[key]));
       }
       setReadData(true);
-
-
       // setReadData(true);
     });
 
@@ -228,7 +226,7 @@ export default function ToolsPage() {
                 </div>
                 <div className='lg:w-5/6 md:w-5/6 sm:w-full h-full pt-2' style={{ marginLeft: '0px' }}>
                   <Tabs aria-label="Dynamic tabs" className='w-full justify-center md:justify-end' items={tabsData} variant='underlined' selectedKey={selectedTabs} onSelectionChange={(key: React.Key) => {
-                    dispatch(set(key as string));
+                    dispatch(setSelectedTab(key as string));
                     localStorage.setItem('selectedTabs', key as string);
                     socket?.emit('getLog', {
                       serverName: serverName,
